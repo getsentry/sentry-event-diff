@@ -5,6 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const uaParser = require("ua-parser-js");
 const jsonDiff = require("json-diff");
+const clc = require("cli-color");
 const app = express();
 const port = 3000;
 
@@ -21,9 +22,7 @@ app.use(
 app.post("/api/:projectId/store", snapshotHandler);
 
 app.listen(port, () =>
-  console.log(
-    `\nSentry Event Diffing Service listening on http://localhost:${port}/store\n`
-  )
+  console.log(`\nSentry Event Diffing Service listening on port ${port}\n`)
 );
 
 /**
@@ -51,13 +50,20 @@ function snapshotHandler(req, res) {
   const snapshotPath = path.join(snapshotsDirectory, snapshotFilename);
 
   if (fs.existsSync(snapshotPath)) {
-    console.log(`Snapshot Found: ${snapshotFilename}`);
+    console.log(clc.blue(`Snapshot Found: ${snapshotFilename}`));
     const content = JSON.parse(fs.readFileSync(snapshotPath));
-    console.log(
-      jsonDiff.diffString(JSON.parse(content.body), JSON.parse(body))
+    const diff = jsonDiff.diffString(
+      JSON.parse(content.body),
+      JSON.parse(body)
     );
+    if (!diff) {
+      console.log(clc.green("✓ Snapshot Match\n"));
+    } else {
+      console.log(clc.red("𝗫 Snapshot Mismatch"));
+      console.log(diff);
+    }
   } else {
-    console.log(`New Snapshot: ${snapshotFilename}`);
+    console.log(clc.yellow(`New Snapshot: ${snapshotFilename}`));
     storeSnapshot(snapshot, snapshotPath);
   }
 
