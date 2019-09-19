@@ -4,7 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const uaParser = require("ua-parser-js");
-const md5 = require("md5");
 const jsonDiff = require("json-diff");
 const app = express();
 const port = 3000;
@@ -19,7 +18,7 @@ app.use(
     size: "200kb"
   })
 );
-app.post("/store", snapshotHandler);
+app.post("/api/:projectId/store", snapshotHandler);
 
 app.listen(port, () =>
   console.log(
