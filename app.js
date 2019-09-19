@@ -33,29 +33,35 @@ const eventNameRegexp = /_BEGIN_([a-zA-Z\-]+)_END_/;
 const snapshotsDirectory = path.join(__dirname, "__snapshots__/");
 
 function snapshotHandler(req, res) {
-  const body = req.body;
-  let name;
-
+  let event;
   try {
-    [_, name] = eventNameRegexp.exec(body);
+    event = JSON.parse(req.body);
+  } catch (e) {
+    console.log("Malformed event");
+    return res.sendStatus(400);
+  }
+
+  let name;
+  try {
+    [_, name] = eventNameRegexp.exec(req.body);
   } catch (e) {
     console.log("Unidentifiable event");
     return res.sendStatus(400);
   }
 
   const ua = uaParser(req.headers["user-agent"]);
-  const sdk = JSON.parse(req.body).sdk;
-  const snapshot = { ua, sdk, name, body };
+  const sdk = {
+    name: event.sdk.name,
+    version: event.sdk.version
+  };
+  const snapshot = { ua, sdk, name, event };
   const snapshotFilename = getSnapshotFilename(snapshot);
   const snapshotPath = path.join(snapshotsDirectory, snapshotFilename);
 
   if (fs.existsSync(snapshotPath)) {
     console.log(clc.blue(`Snapshot Found: ${snapshotFilename}`));
     const content = JSON.parse(fs.readFileSync(snapshotPath));
-    const diff = jsonDiff.diffString(
-      JSON.parse(content.body),
-      JSON.parse(body)
-    );
+    const diff = jsonDiff.diffString(content.event, event);
     if (!diff) {
       console.log(clc.green("✓ Snapshot Match\n"));
     } else {
@@ -83,5 +89,5 @@ function storeSnapshot(snapshot, snapshotPath) {
     fs.mkdirSync(snapshotsDirectory);
   }
 
-  fs.writeFileSync(snapshotPath, JSON.stringify(snapshot));
+  fs.writeFileSync(snapshotPath, JSON.stringify(snapshot, null, 2));
 }
