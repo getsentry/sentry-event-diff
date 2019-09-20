@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <title>wat</title>
+  </head>
+  <body>
+    /* REPLACE_ME */
+    <script>
+      var usecases = document.querySelectorAll('iframe').length;
+      var done = 0;
+
+      window.addEventListener('message', function (event) {
+        if (event.data === 'sent') {
+          done += 1;
+
+          if (done >= usecases) {
+            var doneEl = document.createElement('span');
+            doneEl.id = 'done';
+            document.body.appendChild(doneEl);
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

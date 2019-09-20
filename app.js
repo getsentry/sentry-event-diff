@@ -6,17 +6,18 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 
+const bootstrapUsecasesTemplate = fs.readFileSync(
+  path.join(__dirname, "usecases", "index.html"),
+  "utf8"
+);
 const snapshotHandler = require("./snapshot-handler");
 const usecaseHandler = require("./usecase-handler");
 
 app.use(cors());
 
-app.set("views", "./usecases");
-app.set("view engine", "ejs");
-
 // Server
 app.post(
-  "/api/:_/store",
+  "/store",
   bodyParser.text({
     size: "200kb"
   }),
@@ -25,16 +26,21 @@ app.post(
 
 // Client
 app.get("/go", function(req, res) {
-  return res.render("index", { usecases: getUsecases() });
+  return res.send(
+    bootstrapUsecasesTemplate.replace(
+      "/* REPLACE_ME */",
+      getUsecases()
+        .map(x => `<iframe src="${x}"></iframe>`)
+        .join("\n    ")
+    )
+  );
 });
-app.get("/list/:format", function(req, res) {
-  getUsecases().map(f => `http://localhost:${port}/usecase/${f.name}/`);
-
-  if (req.params.format === "json") {
-    return res.json(dirs);
-  } else {
-    return res.send(dirs);
-  }
+app.get("/list", function(req, res) {
+  return res.send(
+    getUsecases()
+      .map(x => `<a href="${x}">${x}</a>`)
+      .join("<br/>")
+  );
 });
 app.use("/usecase", express.static(path.join(__dirname, "usecases")));
 app.get("/usecase/:usecase/", usecaseHandler);
@@ -42,7 +48,8 @@ app.get("/usecase/:usecase/", usecaseHandler);
 function getUsecases() {
   return fs
     .readdirSync(path.join(__dirname, "usecases"), { withFileTypes: true })
-    .filter(f => f.isDirectory());
+    .filter(f => f.isDirectory())
+    .map(f => `/usecase/${f.name}/`);
 }
 
 app.listen(port, () =>
