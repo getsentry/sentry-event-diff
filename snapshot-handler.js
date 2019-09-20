@@ -4,7 +4,7 @@ const uaParser = require("ua-parser-js");
 const jsonDiff = require("json-diff");
 const clc = require("cli-color");
 
-const snapshotsDirectory = path.join(__dirname, "snapshots/");
+const snapshotsDirectory = path.join(__dirname, "__snapshots__/");
 
 module.exports = function snapshotHandler(req, res) {
   let event;
@@ -15,8 +15,10 @@ module.exports = function snapshotHandler(req, res) {
     return res.sendStatus(400);
   }
 
-  const name = event.__usecase__;
-  if (!name) {
+  const usecase = event.__usecase__;
+  const overwrite = event.__overwrite__;
+
+  if (!usecase) {
     console.log("Unidentifiable event");
     return res.sendStatus(400);
   }
@@ -26,9 +28,15 @@ module.exports = function snapshotHandler(req, res) {
     name: event.sdk.name,
     version: event.sdk.version
   };
-  const snapshot = { ua, sdk, name, event };
+  const snapshot = { ua, sdk, usecase, event };
   const snapshotFilename = getSnapshotFilename(snapshot);
   const snapshotPath = path.join(snapshotsDirectory, snapshotFilename);
+
+  if (overwrite && fs.existsSync(snapshotPath)) {
+    console.log(clc.yellow(`Snapshot Overwritten: ${snapshotFilename}`));
+    storeSnapshot(snapshot, snapshotPath);
+    return res.sendStatus(200);
+  }
 
   if (fs.existsSync(snapshotPath)) {
     console.log(clc.blue(`Snapshot Found: ${snapshotFilename}`));
@@ -47,14 +55,14 @@ module.exports = function snapshotHandler(req, res) {
     storeSnapshot(snapshot, snapshotPath);
   }
 
-  res.sendStatus(200);
+  return res.sendStatus(200);
 };
 
 function getSnapshotFilename(snapshot) {
   return `${snapshot.sdk.name}-${snapshot.sdk.version}-${
     snapshot.ua.browser.name
   }-${snapshot.ua.browser.major || snapshot.browser.version}-${
-    snapshot.name
+    snapshot.usecase
   }.json`;
 }
 
