@@ -23,7 +23,7 @@ IframeTransport.prototype.sendEvent = function(event) {
       reject(request);
     };
 
-    request.open("POST", "http://8fed599b.ngrok.io/store");
+    request.open("POST", "/store");
     request.send(JSON.stringify(event));
   });
 };

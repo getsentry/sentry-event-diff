@@ -1,5 +1,6 @@
 const wd = require("selenium-webdriver");
 
+const host = process.env.HOST || "http://localhost:3000";
 const browserstackUsername = process.env.BROWSERSTACK_USERNAME;
 const browserstackAccessKey = process.env.BROWSERSTACK_ACCESS_KEY;
 
@@ -43,7 +44,7 @@ async function runBrowser(browser) {
     .withCapabilities(browser)
     .build();
 
-  await driver.get("http://8fed599b.ngrok.io/go");
+  await driver.get(`${host}/go`);
   await driver.wait(wd.until.elementLocated(wd.By.id("done")), 30000);
   await driver.quit();
 }
