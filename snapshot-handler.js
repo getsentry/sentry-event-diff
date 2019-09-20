@@ -18,6 +18,9 @@ module.exports = function snapshotHandler(req, res) {
   const usecase = event.__usecase__;
   const overwrite = event.__overwrite__;
 
+  delete event.__usecase__;
+  delete event.__overwrite__;
+
   if (!usecase) {
     console.log("Unidentifiable event");
     return res.sendStatus(400);

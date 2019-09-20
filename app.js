@@ -11,6 +11,9 @@ const usecaseHandler = require("./usecase-handler");
 
 app.use(cors());
 
+app.set("views", "./usecases");
+app.set("view engine", "ejs");
+
 // Server
 app.post(
   "/api/:_/store",
@@ -21,11 +24,11 @@ app.post(
 );
 
 // Client
+app.get("/go", function(req, res) {
+  return res.render("index", { usecases: getUsecases() });
+});
 app.get("/list/:format", function(req, res) {
-  const dirs = fs
-    .readdirSync(path.join(__dirname, "usecases"), { withFileTypes: true })
-    .filter(f => f.isDirectory())
-    .map(f => `http://localhost:${port}/usecase/${f.name}/`);
+  getUsecases().map(f => `http://localhost:${port}/usecase/${f.name}/`);
 
   if (req.params.format === "json") {
     return res.json(dirs);
@@ -35,6 +38,12 @@ app.get("/list/:format", function(req, res) {
 });
 app.use("/usecase", express.static(path.join(__dirname, "usecases")));
 app.get("/usecase/:usecase/", usecaseHandler);
+
+function getUsecases() {
+  return fs
+    .readdirSync(path.join(__dirname, "usecases"), { withFileTypes: true })
+    .filter(f => f.isDirectory());
+}
 
 app.listen(port, () =>
   console.log(`\nSentry Event Diffing Service listening on port ${port}\n`)
