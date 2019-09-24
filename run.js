@@ -1,12 +1,19 @@
 const wd = require("selenium-webdriver");
 
 const got = require("got");
-const host = process.env.HOST || "http://localhost:3000";
 const browserstackUsername = process.env.BROWSERSTACK_USERNAME;
 const browserstackAccessKey = process.env.BROWSERSTACK_ACCESS_KEY;
 
+const oldSdkUrl = process.argv[2];
+const newSdkUrl = process.argv[3];
+
 if (!browserstackUsername || !browserstackAccessKey) {
   console.log("BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY are required");
+  process.exit(1);
+}
+
+if (!oldSdkUrl || !newSdkUrl) {
+  console.log("Usage: node run.js <old-sdk-url> <new-sdk-url>");
   process.exit(1);
 }
 
@@ -21,10 +28,10 @@ const browsers = require("./browsers").map(b =>
   Object.assign({}, baseCapabilities, b)
 );
 
-async function runBrowser(browser, host) {
-  // IE10/IE11 requires protocol for raw IP addresses
-  if (!host.startsWith("http://") || !host.startsWith("https://")) {
-    host = `http://${host}`;
+async function runBrowser(browser, ip, state) {
+  if (state !== "old" || state !== "new") {
+    console.log('Possible states are only: "old" and "new"');
+    process.exit(1);
   }
 
   const driver = new wd.Builder()
@@ -32,7 +39,8 @@ async function runBrowser(browser, host) {
     .withCapabilities(browser)
     .build();
 
-  await driver.get(`${host}/go`);
+  // IE10/IE11 requires protocol for raw IP addresses
+  await driver.get(`http://${ip}/${state}`);
   await driver.wait(wd.until.elementLocated(wd.By.id("done")), 30000);
   await driver.quit();
 }
@@ -41,9 +49,28 @@ async function runBrowser(browser, host) {
   const icanhazip = await got("https://icanhazip.com");
   const ip = icanhazip.body.trim();
 
+  await generateUsecases(oldSdkUrl, newSdkUrl);
+
   for (const browser of browsers) {
-    console.log("Running:", browser.browserName, browser.browser_version);
-    await runBrowser(browser, ip || host);
+    const state = "old";
+    console.log(
+      "Running:",
+      state,
+      browser.browserName,
+      browser.browser_version
+    );
+    await runBrowser(browser, ip);
+  }
+
+  for (const browser of browsers) {
+    const state = "new";
+    console.log(
+      "Running:",
+      state,
+      browser.browserName,
+      browser.browser_version
+    );
+    await runBrowser(browser, ip);
   }
 
   console.log("Done!");

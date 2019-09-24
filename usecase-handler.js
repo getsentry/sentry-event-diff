@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 
 const usecasesDirectory = path.join(__dirname, "usecases/");
+const generatedUsecasesDirectory = path.join(__dirname, "usecases/");
 
 module.exports = function usecaseHandler(req, res) {
   const usecasePath = path.join(

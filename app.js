@@ -8,6 +8,7 @@ const app = express();
 const port = 3000;
 
 const snapshotsDirectory = path.join(__dirname, "__snapshots__/");
+const generatedUsecasesDirectory = path.join(__dirname, "__usecases__/");
 const bootstrapUsecasesTemplate = fs.readFileSync(
   path.join(__dirname, "usecases", "index.html"),
   "utf8"
@@ -59,9 +60,8 @@ const server = app.listen(port, () =>
 );
 
 function cleanup() {
-  if (fs.existsSync(snapshotsDirectory)) {
-    rimraf.sync(snapshotsDirectory);
-  }
+  rimraf.sync(snapshotsDirectory);
+  rimraf.sync(generatedUsecasesDirectory);
 
   server.close(function() {
     console.log("Cleanup successful");
