@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
-const port = 3000;
+const port = 80;
 
 const snapshotsDirectory = path.join(__dirname, "__snapshots__");
 const generatedUsecasesDirectory = path.join(__dirname, "__usecases__");

@@ -1,6 +1,8 @@
 const wd = require("selenium-webdriver");
-
 const got = require("got");
+
+const generateUsecases = require("./generate-usecases");
+
 const browserstackUsername = process.env.BROWSERSTACK_USERNAME;
 const browserstackAccessKey = process.env.BROWSERSTACK_ACCESS_KEY;
 

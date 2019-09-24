@@ -71,15 +71,9 @@ function generateSingleUsecase(usecase, statePath, sdkUrl) {
     });
 }
 
-async function generateUsecases(oldSdkUrl, newSdkUrl) {
+module.exports = function generateUsecases(oldSdkUrl, newSdkUrl) {
   rimraf.sync(generatedUsecasesDirectory);
   fs.mkdirSync(generatedUsecasesDirectory);
   generateUsecasesState("old", oldSdkUrl);
   generateUsecasesState("new", newSdkUrl);
-}
-
-(async () => {
-  await generateUsecases("oldurl", "newurl");
-})();
-
-module.exports = generateUsecases;
+};
