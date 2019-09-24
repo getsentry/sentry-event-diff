@@ -16,10 +16,8 @@ module.exports = function snapshotHandler(req, res) {
   }
 
   const usecase = event.__usecase__;
-  const overwrite = event.__overwrite__;
 
   delete event.__usecase__;
-  delete event.__overwrite__;
 
   if (!usecase) {
     console.log("Unidentifiable event");
@@ -35,11 +33,15 @@ module.exports = function snapshotHandler(req, res) {
   const snapshotFilename = getSnapshotFilename(snapshot);
   const snapshotPath = path.join(snapshotsDirectory, snapshotFilename);
 
-  if (overwrite && fs.existsSync(snapshotPath)) {
-    console.log(clc.yellow(`Snapshot Overwritten: ${snapshotFilename}`));
-    storeSnapshot(snapshot, snapshotPath);
-    return res.sendStatus(200);
-  }
+  // NOTE: This feature is not necessary right now
+  //
+  // const overwrite = event.__overwrite__;
+  // delete event.__overwrite__;
+  // if (overwrite && fs.existsSync(snapshotPath)) {
+  //   console.log(clc.yellow(`Snapshot Overwritten: ${snapshotFilename}`));
+  //   storeSnapshot(snapshot, snapshotPath);
+  //   return res.sendStatus(200);
+  // }
 
   if (fs.existsSync(snapshotPath)) {
     console.log(clc.blue(`Snapshot Found: ${snapshotFilename}`));
