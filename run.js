@@ -1,44 +1,32 @@
 const wd = require("selenium-webdriver");
 
+const got = require("got");
 const host = process.env.HOST || "http://localhost:3000";
 const browserstackUsername = process.env.BROWSERSTACK_USERNAME;
 const browserstackAccessKey = process.env.BROWSERSTACK_ACCESS_KEY;
 
+if (!browserstackUsername || !browserstackAccessKey) {
+  console.log("BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY are required");
+  process.exit(1);
+}
+
 const baseCapabilities = {
-  browserName: "IE",
-  browser_version: "10.0",
-  os: "Windows",
-  os_version: "7",
   resolution: "1024x768",
   "browserstack.user": browserstackUsername,
   "browserstack.key": browserstackAccessKey,
-  name: "Bstack-[Node] Sample Test"
+  name: "sentry-event-diff"
 };
 
-const browsers = [
-  {
-    browserName: "IE",
-    browser_version: "10.0",
-    os: "Windows",
-    os_version: "7"
-  },
+const browsers = require("./browsers").map(b =>
+  Object.assign({}, baseCapabilities, b)
+);
 
-  {
-    browserName: "IE",
-    browser_version: "11.0",
-    os: "Windows",
-    os_version: "10"
-  },
-
-  {
-    browserName: "Edge",
-    browser_version: "18.0",
-    os: "Windows",
-    os_version: "10"
+async function runBrowser(browser, host) {
+  // IE10/IE11 requires protocol for raw IP addresses
+  if (!host.startsWith("http://") || !host.startsWith("https://")) {
+    host = `http://${host}`;
   }
-].map(b => Object.assign({}, baseCapabilities, b));
 
-async function runBrowser(browser) {
   const driver = new wd.Builder()
     .usingServer("http://hub-cloud.browserstack.com/wd/hub")
     .withCapabilities(browser)
@@ -50,9 +38,12 @@ async function runBrowser(browser) {
 }
 
 (async function run() {
+  const icanhazip = await got("https://icanhazip.com");
+  const ip = icanhazip.body.trim();
+
   for (const browser of browsers) {
     console.log("Running:", browser.browserName, browser.browser_version);
-    await runBrowser(browser);
+    await runBrowser(browser, ip || host);
   }
 
   console.log("Done!");

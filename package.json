@@ -9,6 +9,7 @@
     "cli-color": "^1.4.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "got": "^9.6.0",
     "json-diff": "^0.5.4",
     "rimraf": "^3.0.0",
     "selenium-webdriver": "^4.0.0-alpha.5",
