@@ -21,9 +21,11 @@ if (!oldSdkUrl || !newSdkUrl) {
   process.exit(1);
 }
 
+console.log("\nSentry Event Diffing Service\n");
+
 generateUsecases(oldSdkUrl, newSdkUrl);
 
-console.log("\nUsecases generated.");
+console.log("Usecases generated...");
 
 app.use(cors());
 
@@ -51,9 +53,7 @@ app.get("/new", (req, res) =>
 );
 app.get("/new/:usecase", usecaseHandler("new"));
 
-const server = app.listen(port, () =>
-  console.log(`\nSentry Event Diffing Service listening on port ${port}\n`)
-);
+const server = app.listen(port, () => console.log("Server running..."));
 
 function cleanup() {
   rimraf.sync(snapshotsDirectory);

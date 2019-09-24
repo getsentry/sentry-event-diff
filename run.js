@@ -20,8 +20,8 @@ const browsers = require("./browsers").map(b =>
   Object.assign({}, baseCapabilities, b)
 );
 
-async function runBrowser(browser, ip, state) {
-  if (state !== "old" || state !== "new") {
+async function runBrowser(browser, host, state) {
+  if (state !== "old" && state !== "new") {
     console.log('Possible states are only: "old" and "new"');
     process.exit(1);
   }
@@ -31,35 +31,38 @@ async function runBrowser(browser, ip, state) {
     .withCapabilities(browser)
     .build();
 
-  // IE10/IE11 requires protocol for raw IP addresses
-  await driver.get(`http://${ip}/${state}`);
+  // Remember that IE10/IE11 requires protocol for raw IP addresses!
+  await driver.get(`${host}/${state}`);
   await driver.wait(wd.until.elementLocated(wd.By.id("done")), 30000);
   await driver.quit();
 }
 
 (async function run() {
-  const icanhazip = await got("https://icanhazip.com");
-  const ip = icanhazip.body.trim();
+  let host = process.env.HOST;
+
+  if (!host) {
+    const icanhazip = await got("https://icanhazip.com");
+    const ip = icanhazip.body.trim();
+    host = `http://${ip}`;
+  }
 
   for (const browser of browsers) {
     const state = "old";
     console.log(
-      "Running:",
-      oldSdkUrl,
+      "Running: old SDK on",
       browser.browserName,
       browser.browser_version
     );
-    await runBrowser(browser, ip, "old");
+    await runBrowser(browser, host, "old");
   }
 
   for (const browser of browsers) {
     console.log(
-      "Running:",
-      newSdkUrl,
+      "Running: new SDK on",
       browser.browserName,
       browser.browser_version
     );
-    await runBrowser(browser, ip, "new");
+    await runBrowser(browser, host, "new");
   }
 
   console.log("Done!");
