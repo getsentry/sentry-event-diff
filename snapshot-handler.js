@@ -4,7 +4,7 @@ const uaParser = require("ua-parser-js");
 const jsonDiff = require("json-diff");
 const clc = require("cli-color");
 
-const snapshotsDirectory = path.join(__dirname, "__snapshots__/");
+const snapshotsDirectory = path.join(__dirname, "__snapshots__");
 
 module.exports = function snapshotHandler(req, res) {
   let event;

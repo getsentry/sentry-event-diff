@@ -55,22 +55,21 @@ async function runBrowser(browser, ip, state) {
     const state = "old";
     console.log(
       "Running:",
-      state,
+      oldSdkUrl,
       browser.browserName,
       browser.browser_version
     );
-    await runBrowser(browser, ip);
+    await runBrowser(browser, ip, "old");
   }
 
   for (const browser of browsers) {
-    const state = "new";
     console.log(
       "Running:",
-      state,
+      newSdkUrl,
       browser.browserName,
       browser.browser_version
     );
-    await runBrowser(browser, ip);
+    await runBrowser(browser, ip, "new");
   }
 
   console.log("Done!");

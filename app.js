@@ -7,12 +7,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 
-const snapshotsDirectory = path.join(__dirname, "__snapshots__/");
-const generatedUsecasesDirectory = path.join(__dirname, "__usecases__/");
-const bootstrapUsecasesTemplate = fs.readFileSync(
-  path.join(__dirname, "usecases", "index.html"),
-  "utf8"
-);
+const snapshotsDirectory = path.join(__dirname, "__snapshots__");
+const generatedUsecasesDirectory = path.join(__dirname, "__usecases__");
 const snapshotHandler = require("./snapshot-handler");
 const usecaseHandler = require("./usecase-handler");
 
@@ -28,32 +24,14 @@ app.post(
 );
 
 // Client
-app.get("/go", function(req, res) {
-  return res.send(
-    bootstrapUsecasesTemplate.replace(
-      "/* REPLACE_ME */",
-      getUsecases()
-        .map(x => `<iframe src="${x}"></iframe>`)
-        .join("\n    ")
-    )
-  );
-});
-app.get("/list", function(req, res) {
-  return res.send(
-    getUsecases()
-      .map(x => `<a href="${x}">${x}</a>`)
-      .join("<br/>")
-  );
-});
-app.use("/usecase", express.static(path.join(__dirname, "usecases")));
+app.get("/old", (req, res) =>
+  res.send(path.join(generatedUsecasesDirectory, "/old/index.html"))
+);
+app.get("/new", (req, res) =>
+  res.send(path.join(generatedUsecasesDirectory, "/new/index.html"))
+);
+app.use("/__usecases__", express.static(path.join(__dirname, "usecases")));
 app.get("/usecase/:usecase/", usecaseHandler);
-
-function getUsecases() {
-  return fs
-    .readdirSync(path.join(__dirname, "usecases"), { withFileTypes: true })
-    .filter(f => f.isDirectory())
-    .map(f => `/usecase/${f.name}/`);
-}
 
 const server = app.listen(port, () =>
   console.log(`\nSentry Event Diffing Service listening on port ${port}\n`)
