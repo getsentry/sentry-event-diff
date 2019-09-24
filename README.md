@@ -1,11 +1,9 @@
-```js
-# Run the server
-$ node app.js
-```
+1. Deploy to EC2
+2. SSH into the instance
+3. `node app.js <old-sdk-url> <new-sdk-url>
+4. Move process to the background
+5. `BROWSERSTACK_USERNAME=<username> BROWSERSTACK_ACCESS_KEY=<key> node run.js`
+or locally:
+`HOST=<ec2-instance-url> BROWSERSTACK_USERNAME=<username> BROWSERSTACK_ACCESS_KEY=<key> node run.js`
 
-Go to: http://localhost:3000/go to trigger locally or to use browserstack (ngrok has a request limit, so need to deploy it somewhere - TBD):
-
-```js
-$ ngrok http 3000
-$ HOST=<ngrok-url> BROWSERSTACK_ACCESS_KEY=<key> BROWSERSTACK_USERNAME=<username> node run.js
-```
+To add a new usecase copy/paste one of previous directories in `usecases` directory and change its behavior. The rest is automatic.
