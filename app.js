@@ -23,7 +23,7 @@ if (!oldSdkUrl || !newSdkUrl) {
 
 generateUsecases(oldSdkUrl, newSdkUrl);
 
-console.log('\nUsecases generated.')
+console.log("\nUsecases generated.");
 
 app.use(cors());
 
@@ -36,20 +36,20 @@ app.post(
   snapshotHandler
 );
 
-app.get("/", (req, res) => res.send('hi'));
+app.get("/", (req, res) => res.send("hi"));
 
 // Client
 app.use("/old", express.static(path.join(__dirname, "__usecases__/old")));
 app.get("/old", (req, res) =>
   res.sendFile(path.join(generatedUsecasesDirectory, "/old/index.html"))
 );
-app.get("/old/:usecase", usecaseHandler('old'))
+app.get("/old/:usecase", usecaseHandler("old"));
 
 app.use("/new", express.static(path.join(__dirname, "__usecases__/new")));
 app.get("/new", (req, res) =>
   res.sendFile(path.join(generatedUsecasesDirectory, "/new/index.html"))
 );
-app.get("/new/:usecase", usecaseHandler('new'))
+app.get("/new/:usecase", usecaseHandler("new"));
 
 const server = app.listen(port, () =>
   console.log(`\nSentry Event Diffing Service listening on port ${port}\n`)
