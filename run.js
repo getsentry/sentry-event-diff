@@ -1,21 +1,11 @@
 const wd = require("selenium-webdriver");
 const got = require("got");
 
-const generateUsecases = require("./generate-usecases");
-
 const browserstackUsername = process.env.BROWSERSTACK_USERNAME;
 const browserstackAccessKey = process.env.BROWSERSTACK_ACCESS_KEY;
 
-const oldSdkUrl = process.argv[2];
-const newSdkUrl = process.argv[3];
-
 if (!browserstackUsername || !browserstackAccessKey) {
   console.log("BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY are required");
-  process.exit(1);
-}
-
-if (!oldSdkUrl || !newSdkUrl) {
-  console.log("Usage: node run.js <old-sdk-url> <new-sdk-url>");
   process.exit(1);
 }
 
@@ -50,8 +40,6 @@ async function runBrowser(browser, ip, state) {
 (async function run() {
   const icanhazip = await got("https://icanhazip.com");
   const ip = icanhazip.body.trim();
-
-  await generateUsecases(oldSdkUrl, newSdkUrl);
 
   for (const browser of browsers) {
     const state = "old";
