@@ -11,6 +11,7 @@
     "express": "^4.17.1",
     "got": "^9.6.0",
     "json-diff": "^0.5.4",
+    "lodash": "^4.17.15",
     "rimraf": "^3.0.0",
     "selenium-webdriver": "^4.0.0-alpha.5",
     "ua-parser-js": "^0.7.20"

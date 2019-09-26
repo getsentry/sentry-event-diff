@@ -3,6 +3,7 @@ const fs = require("fs");
 const uaParser = require("ua-parser-js");
 const jsonDiff = require("json-diff");
 const clc = require("cli-color");
+const _ = require('lodash')
 
 const snapshotsDirectory = path.join(__dirname, "__snapshots__");
 
@@ -36,9 +37,7 @@ module.exports = function snapshotHandler(req, res) {
   // Fields that should be removed as they are either different for every event,
   // do not contribute to the test or are "known changes"
   const filterFields = ["__usecase__", "event_id"];
-  filterFields.forEach(field => {
-    delete event[field];
-  });
+  filterFields.forEach(field => _.unset(event, field));
 
   // NOTE: This feature is not necessary right now
   //
