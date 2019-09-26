@@ -47,9 +47,17 @@ async function runBrowser(browser, host, state) {
   }
 
   for (const browser of browsers) {
-    console.log(`Old SDK: ${browser.os}-${browser.os_version}-${browser.browserName}-${browser.browser_version || 'default'}`);
+    console.log(
+      `Old SDK: ${browser.os}-${browser.os_version}-${
+        browser.browserName
+      }-${browser.browser_version || "default"}`
+    );
     await runBrowser(browser, host, "old");
-    console.log(`New SDK: ${browser.os}-${browser.os_version}-${browser.browserName}-${browser.browser_version || 'default'}`);
+    console.log(
+      `New SDK: ${browser.os}-${browser.os_version}-${
+        browser.browserName
+      }-${browser.browser_version || "default"}`
+    );
     await runBrowser(browser, host, "new");
   }
 

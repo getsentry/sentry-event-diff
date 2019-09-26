@@ -18,19 +18,28 @@ module.exports = function snapshotHandler(req, res) {
   }
 
   const usecase = event.__usecase__;
+
   if (!event.__usecase__) {
-    console.log(clc.red("Unidentifiable event: missing top-level __usecase__ attribute"));
+    console.log(
+      clc.red("Unidentifiable event: missing top-level __usecase__ attribute")
+    );
     return res.sendStatus(400);
   }
-  delete event.__usecase__;
 
   if (!event.event_id) {
-    console.log(clc.red("Incorrect event: missing top-level event_id attribute"));
+    console.log(
+      clc.red("Incorrect event: missing top-level event_id attribute")
+    );
     return res.sendStatus(400);
   }
-  delete event.event_id;
 
-  const ua = uaParser(req.headers["user-agent"]);
+  // Fields that should be removed as they are either different for every event,
+  // do not contribute to the test or are "known changes"
+  const filterFields = ["__usecase__", "event_id"];
+  filterFields.forEach(field => {
+    delete event[field];
+  });
+
   // NOTE: This feature is not necessary right now
   //
   // const sdk = {
@@ -38,6 +47,7 @@ module.exports = function snapshotHandler(req, res) {
   //   version: event.sdk.version
   // };
   // const snapshot = { ua, sdk, usecase, event };
+  const ua = uaParser(req.headers["user-agent"]);
   const snapshot = { ua, usecase, event };
   const snapshotFilename = getSnapshotFilename(snapshot);
   const snapshotPath = path.join(snapshotsDirectory, snapshotFilename);
@@ -73,7 +83,9 @@ module.exports = function snapshotHandler(req, res) {
 };
 
 function getSnapshotFilename(snapshot) {
-  return `${snapshot.ua.os.name}-${snapshot.ua.os.version}-${snapshot.ua.browser.name}-${snapshot.ua.browser.major}-${snapshot.usecase}.json`;
+  return `${snapshot.ua.os.name}-${snapshot.ua.os.version}-${
+    snapshot.ua.browser.name
+  }-${snapshot.ua.browser.major}-${snapshot.usecase}.json`;
 }
 
 function storeSnapshot(snapshot, snapshotPath) {
