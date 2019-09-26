@@ -36,8 +36,10 @@ module.exports = function snapshotHandler(req, res) {
 
   // Fields that should be removed as they are either different for every event,
   // do not contribute to the test or are "known changes"
-  const filterFields = ["__usecase__", "event_id"];
-  filterFields.forEach(field => _.unset(event, field));
+  const defaultFields = ["__usecase__", "event_id"];
+  // It's easier for git to resolve it like this
+  const customFields = [];
+  [...defaultFields, ...customFields].forEach(field => _.unset(event, field));
 
   // NOTE: This feature is not necessary right now
   //
@@ -81,7 +83,8 @@ module.exports = function snapshotHandler(req, res) {
 };
 
 function getSnapshotFilename(snapshot) {
-  return `${snapshot.ua.os.name}-${snapshot.ua.os.version}-${
+  // parseInt because BrowserStack sometimes spawns iOS 12.1.4 and sometimes 12.2 ¯\_(ツ)_/¯
+  return `${snapshot.ua.os.name}-${parseInt(snapshot.ua.os.version, 10)}-${
     snapshot.ua.browser.name
   }-${snapshot.ua.browser.major}-${snapshot.usecase}.json`;
 }
