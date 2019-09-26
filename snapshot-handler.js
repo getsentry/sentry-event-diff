@@ -17,6 +17,7 @@ module.exports = function snapshotHandler(req, res) {
     return res.sendStatus(400);
   }
 
+  const usecase = event.__usecase__;
   if (!event.__usecase__) {
     console.log(clc.red("Unidentifiable event: missing top-level __usecase__ attribute"));
     return res.sendStatus(400);
