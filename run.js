@@ -47,20 +47,17 @@ async function runBrowser(browser, host, state) {
   }
 
   for (const browser of browsers) {
-    const state = "old";
     console.log(
       "Running: old SDK on",
       browser.browserName,
-      browser.browser_version
+      (browser.browser_version || 'unknown_version')
     );
     await runBrowser(browser, host, "old");
-  }
 
-  for (const browser of browsers) {
     console.log(
       "Running: new SDK on",
       browser.browserName,
-      browser.browser_version
+      (browser.browser_version || 'unknown_version')
     );
     await runBrowser(browser, host, "new");
   }
