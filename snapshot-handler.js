@@ -13,17 +13,21 @@ module.exports = function snapshotHandler(req, res) {
     const body = req.body.replace(/\/new\//g, "/_/").replace(/\/old\//g, "/_/");
     event = JSON.parse(body);
   } catch (e) {
-    console.log("Malformed event");
+    console.log(clc.red("Malformed event: incorrect JSON data"));
     return res.sendStatus(400);
   }
 
-  const usecase = event.__usecase__;
+  if (!event.__usecase__) {
+    console.log(clc.red("Unidentifiable event: missing top-level __usecase__ attribute"));
+    return res.sendStatus(400);
+  }
   delete event.__usecase__;
 
-  if (!usecase) {
-    console.log("Unidentifiable event");
+  if (!event.event_id) {
+    console.log(clc.red("Incorrect event: missing top-level event_id attribute"));
     return res.sendStatus(400);
   }
+  delete event.event_id;
 
   const ua = uaParser(req.headers["user-agent"]);
   // NOTE: This feature is not necessary right now

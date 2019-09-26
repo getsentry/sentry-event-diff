@@ -32,7 +32,6 @@ Sentry.init({
   dsn: "http://whatever@really.com/1337",
   beforeSend: function(event) {
     event.__usecase__ = usecase;
-    delete event.event_id;
     return event;
   },
   transport: IframeTransport
