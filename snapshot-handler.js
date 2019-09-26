@@ -72,13 +72,7 @@ module.exports = function snapshotHandler(req, res) {
 };
 
 function getSnapshotFilename(snapshot) {
-  return `${snapshot.ua.browser.name}-${snapshot.ua.browser.major ||
-    snapshot.browser.version}-${snapshot.usecase}.json`;
-  // return `${snapshot.sdk.name}-${snapshot.sdk.version}-${
-  //   snapshot.ua.browser.name
-  // }-${snapshot.ua.browser.major || snapshot.browser.version}-${
-  //   snapshot.usecase
-  // }.json`;
+  return `${snapshot.ua.os.name}-${snapshot.ua.os.version}-${snapshot.ua.browser.name}-${snapshot.ua.browser.major}-${snapshot.usecase}.json`;
 }
 
 function storeSnapshot(snapshot, snapshotPath) {
