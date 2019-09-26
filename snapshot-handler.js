@@ -62,13 +62,12 @@ module.exports = function snapshotHandler(req, res) {
   // }
 
   if (fs.existsSync(snapshotPath)) {
-    console.log(clc.blue(`Snapshot Found: ${snapshotFilename}`));
     const content = JSON.parse(fs.readFileSync(snapshotPath));
     const diff = jsonDiff.diffString(content.event, event);
     if (!diff) {
-      console.log(clc.green("✓ Snapshot Match"));
+      console.log(clc.green(`✓ Snapshot Match: ${snapshotFilename}`));
     } else {
-      console.log(clc.red("𝗫 Snapshot Mismatch"));
+      console.log(clc.red(`𝗫 Snapshot Mismatch: ${snapshotFilename}`));
       console.log(diff);
       // Move cursor 1 line up
       process.stdout.write("\033[1A\r");
