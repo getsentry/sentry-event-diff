@@ -30,9 +30,10 @@ IframeTransport.prototype.sendEvent = function(event) {
 
 Sentry.init({
   dsn: "http://whatever@really.com/1337",
+  transport: IframeTransport,
+  attachStacktrace: true,
   beforeSend: function(event) {
     event.__usecase__ = usecase;
     return event;
   },
-  transport: IframeTransport
 });

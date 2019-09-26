@@ -5,7 +5,17 @@
     <script src="/* SDK_URL_REPLACE */"></script>
     <script src="../init.js"></script>
     <script>
-      throw 'wat';
+      function foo() {
+        bar();
+      }
+
+      function bar() {
+        throw new TypeError("wat");
+      }
+
+      setTimeout(function() {
+        foo();
+      }, 0);
     </script>
   </head>
   <body></body>

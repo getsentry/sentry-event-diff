@@ -3,11 +3,7 @@ function foo() {
 }
 
 function bar() {
-  baz();
-}
-
-function baz() {
-  throw "wat";
+  throw new Error("wat");
 }
 
 foo();

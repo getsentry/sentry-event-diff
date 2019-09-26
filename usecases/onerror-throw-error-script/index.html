@@ -5,7 +5,15 @@
     <script src="/* SDK_URL_REPLACE */"></script>
     <script src="../init.js"></script>
     <script>
-      throw new Error('wat');
+      function foo () {
+        bar();
+      }
+
+      function bar() {
+        throw new Error('wat');
+      }
+
+      foo();
     </script>
   </head>
   <body></body>
