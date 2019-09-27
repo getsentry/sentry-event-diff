@@ -37,3 +37,7 @@ Sentry.init({
     return event;
   },
 });
+
+if (!'onunhandledrejection' in window) {
+  window.parent.postMessage("sent", "*");  
+}
