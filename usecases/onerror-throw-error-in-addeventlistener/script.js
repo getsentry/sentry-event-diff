@@ -7,7 +7,7 @@ function bar() {
 }
 
 var baz = document.getElementById('foo');
-baz.addEventListener('click', function foo() {
+baz.addEventListener('click', function fooHandler() {
   foo();
 });
 baz.click();
