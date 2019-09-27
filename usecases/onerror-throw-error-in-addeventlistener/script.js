@@ -6,8 +6,8 @@ function bar() {
   throw new TypeError("wat");
 }
 
-var baz = document.createElement('span');
-baz.addEventListener('click', function () {
-  foo()
-})
-baz.dispatchEvent(new MouseEvent("click"));
+var baz = document.getElementById('foo');
+baz.addEventListener('click', function foo() {
+  foo();
+});
+baz.click();
