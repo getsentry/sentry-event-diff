@@ -10,4 +10,4 @@ var baz = document.createElement('span');
 baz.addEventListener('click', function () {
   foo()
 })
-baz.click()
+baz.dispatchEvent(new MouseEvent("click"));
