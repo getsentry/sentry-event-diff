@@ -3,7 +3,7 @@ function foo() {
 }
 
 function bar() {
-  throw new TypeError("wat");
+  throw "wat";
 }
 
 setTimeout(function() {
