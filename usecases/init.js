@@ -6,6 +6,11 @@ var pathSegments = window.location.pathname
 
 var usecase = pathSegments[pathSegments.length - 1];
 
+if (!"onunhandledrejection" in window) {
+  console.log('No onunhandledrejection support. Skipping usecase:', usecase);
+  return void window.parent.postMessage("sent", "*");
+}
+
 function IframeTransport() {}
 
 IframeTransport.prototype.sendEvent = function(event) {
@@ -35,9 +40,5 @@ Sentry.init({
   beforeSend: function(event) {
     event.__usecase__ = usecase;
     return event;
-  },
+  }
 });
-
-if (!'onunhandledrejection' in window) {
-  window.parent.postMessage("sent", "*");  
-}
