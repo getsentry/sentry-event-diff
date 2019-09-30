@@ -64,6 +64,8 @@ app.get("/new", (req, res) =>
 );
 app.get("/new/:usecase", usecaseHandler("new"));
 
+app.use("/diffs", express.static(path.join(__dirname, "__diffs__")));
+
 const server = app.listen(port, () => console.log("Server running..."));
 
 function cleanup() {

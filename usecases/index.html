@@ -9,14 +9,20 @@
       var usecases = document.querySelectorAll('iframe').length;
       var done = 0;
 
+      console.log("Awaiting " + usecases + " usecases.");
+
       window.addEventListener('message', function (event) {
         if (event.data === 'sent') {
           done += 1;
+
+          console.log("Done: " + done + ". Left: " + (usecases-done) + ".");
 
           if (done >= usecases) {
             var doneEl = document.createElement('span');
             doneEl.id = 'done';
             document.body.appendChild(doneEl);
+            
+            console.log("Done.");
           }
         }
       })
