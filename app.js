@@ -27,6 +27,17 @@ generateUsecases(oldSdkUrl, newSdkUrl);
 
 console.log("Usecases generated...");
 
+const diffsDirectory = path.join(__dirname, "__diffs__");
+if (!fs.existsSync(diffsDirectory)) {
+  fs.mkdirSync(diffsDirectory);
+}
+
+const now = Date.now();
+const diffPath = path.join(diffsDirectory, `${now}.json`)
+const diffStream = fs.createWriteStream(diffPath, {flags:'a'});
+
+console.log(`Diff file __diffs__/${now}.json created...`)
+
 app.use(cors());
 
 // Server
@@ -35,7 +46,7 @@ app.post(
   bodyParser.text({
     size: "200kb"
   }),
-  snapshotHandler
+  snapshotHandler(diffStream)
 );
 
 app.get("/", (req, res) => res.send("hi"));
@@ -58,6 +69,7 @@ const server = app.listen(port, () => console.log("Server running..."));
 function cleanup() {
   rimraf.sync(snapshotsDirectory);
   rimraf.sync(generatedUsecasesDirectory);
+  diffStream.end();
 
   server.close(function() {
     console.log("Cleanup successful");
