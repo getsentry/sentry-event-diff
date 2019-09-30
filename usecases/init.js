@@ -5,11 +5,15 @@ var pathSegments = window.location.pathname
   });
 
 var usecase = pathSegments[pathSegments.length - 1];
+var unhandledrejectionSupport = "onunhandledrejection" in window;
+var eventDelivered = false;
 
-if (!"onunhandledrejection" in window) {
-  console.log('No onunhandledrejection support. Skipping usecase:', usecase);
-  window.parent.postMessage("sent", "*");
-}
+setTimeout(function() {
+  if (!eventDelivered && !unhandledrejectionSupport) {
+    console.log("No onunhandledrejection support. Skipping usecase:", usecase);
+    window.parent.postMessage("sent", "*");
+  }
+}, 1000);
 
 function IframeTransport() {}
 
@@ -23,6 +27,7 @@ IframeTransport.prototype.sendEvent = function(event) {
       }
       if (request.status === 200) {
         window.parent.postMessage("sent", "*");
+        eventDelivered = true;
         resolve({ status: 200 });
       }
       reject(request);
@@ -42,3 +47,8 @@ Sentry.init({
     return event;
   }
 });
+
+if (!"onunhandledrejection" in window) {
+  console.log("No onunhandledrejection support. Skipping usecase:", usecase);
+  window.parent.postMessage("sent", "*");
+}
