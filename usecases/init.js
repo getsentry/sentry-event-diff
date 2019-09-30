@@ -8,7 +8,7 @@ var usecase = pathSegments[pathSegments.length - 1];
 
 if (!"onunhandledrejection" in window) {
   console.log('No onunhandledrejection support. Skipping usecase:', usecase);
-  return void window.parent.postMessage("sent", "*");
+  window.parent.postMessage("sent", "*");
 }
 
 function IframeTransport() {}
