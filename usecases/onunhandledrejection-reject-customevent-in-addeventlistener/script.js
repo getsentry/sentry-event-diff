@@ -3,7 +3,9 @@ function foo(e) {
 }
 
 function bar(e) {
-  throw e;
+  new Promise(function (resolve, reject) {
+    reject(e);
+  });
 }
 
 var baz = document.getElementById('foo');
