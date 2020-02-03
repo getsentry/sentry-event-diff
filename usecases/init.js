@@ -48,6 +48,46 @@ Sentry.init({
   }
 });
 
+Sentry.configureScope(scope => {
+  const obj = {
+    a: "wat"
+  };
+  obj.c = obj;
+  obj.b = [obj, obj.a, obj.c, "ok"];
+
+  obj.foo = {
+    bar: {
+      baz: {
+        qux: {
+          quaz: [1, 2, 3]
+        }
+      }
+    }
+  };
+
+  obj.foo.bar.baz = obj.foo;
+
+  scope.setUser({
+    foo: "bar",
+    baz: "qux"
+  });
+
+  scope.setExtra("foo", obj);
+
+  scope.setExtras({
+    foo: "bar",
+    baz: obj
+  });
+
+  scope.setContext("foo", obj);
+
+  scope.addBreadcrumb({
+    type: "foo",
+    message: "ok",
+    data: obj
+  });
+});
+
 if (!"onunhandledrejection" in window) {
   console.log("No onunhandledrejection support. Skipping usecase:", usecase);
   window.parent.postMessage("sent", "*");
